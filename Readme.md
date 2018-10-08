@@ -308,6 +308,8 @@ b = {'a':1,'b':2,'c':3}
 c = True
 print type(a),type(b),type(c) # <type 'list'> <type 'dict'> <type 'bool'>
 print isinstance(a,list)  # True
+dir(str)  #返回一个列表，包含str对象的属性和方法
+
 ```
 
 
@@ -318,6 +320,11 @@ print isinstance(a,list)  # True
 
 ```python
 d = {key: value for (key, value) in iterable}
+
+In [46]: stu_info = [("Peiyao",22),("Zbin",22)]
+In [47]: my_dict = {name:age for name,age in stu_info}
+In [48]: my_dict
+Out[48]: {'Peiyao': 22, 'Zbin': 22}
 ```
 
 ## 7 Python中单下划线和双下划线
