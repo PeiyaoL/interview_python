@@ -542,8 +542,7 @@ http://stackoverflow.com/questions/3394835/args-and-kwargs
 
 新式类很早在2.2就出现了,所以旧式类完全是兼容的问题,Python3里的类全部都是新式类.这里有一个MRO问题可以了解下(新式类是广度优先,旧式类是深度优先),<Python核心编程>里讲的也很多.
 
-> 一个旧式类的深度优先的例子
-
+> 一个旧式类(经典类)的深度优先的例子
 ```python
 class A():
     def foo1(self):
@@ -558,12 +557,38 @@ class D(B, C):
     pass
 
 d = D()
-d.foo1()
+d.foo1() #A
+```
+**按照经典类的查找顺序`从左到右深度优先`的规则，在访问`d.foo1()`的时候,D这个类是没有的..那么往上查找,先找到B,里面没有,深度优先,访问A,找到了foo1(),所以这时候调用的是A的foo1()，从而导致C重写的foo1()被绕过**
+> 一个新式类的例子
+```python
+In [32]: class A():
+    ...:     def foo1(self):
+    ...:         print("A")
 
-# A
+In [33]: class B(A):
+    ...:     def foo2(self):
+    ...:         print("B")
+
+In [34]: class C(A):
+    ...:     def foo1(self):
+    ...:         print("C")
+    ...:
+
+In [35]: class D(B,C):
+    ...:     pass
+    ...:
+    ...:
+
+In [36]: d = D()
+
+In [37]: d.foo1()
+C
+
+In [38]: print(D.__mro__)   #__mro__,是一个元组,装着方法解析时的对象查找顺序
+(<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>)
 ```
 
-**按照经典类的查找顺序`从左到右深度优先`的规则，在访问`d.foo1()`的时候,D这个类是没有的..那么往上查找,先找到B,里面没有,深度优先,访问A,找到了foo1(),所以这时候调用的是A的foo1()，从而导致C重写的foo1()被绕过**
 
 
 
@@ -573,7 +598,7 @@ d.foo1()
 
 1. `__new__`是一个静态方法,而`__init__`是一个实例方法.
 2. `__new__`方法会返回一个创建的实例,而`__init__`什么都不返回.
-3. 只有在`__new__`返回一个cls的实例时后面的`__init__`才能被调用.
+3. 只有在`__new__`返回一个cls的实例时,后面的`__init__`才能被调用.
 4. 当创建一个新实例时调用`__new__`,初始化一个实例时用`__init__`.
 
 [stackoverflow](http://stackoverflow.com/questions/674304/pythons-use-of-new-and-init)
