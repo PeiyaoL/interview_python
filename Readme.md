@@ -336,7 +336,7 @@ Out[48]: {'Peiyao': 22, 'Zbin': 22}
 ...             self._semiprivate = ", world!"
 ...
 >>> mc = MyClass()
->>> print mc.__superprivate
+>>> print mc.__superprivate   #私有属性只能在类的内部进行访问
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 AttributeError: myClass instance has no attribute '__superprivate'
@@ -348,9 +348,8 @@ AttributeError: myClass instance has no attribute '__superprivate'
 
 `__foo__`:一种约定,Python内部的名字,用来区别其他用户自定义的命名,以防冲突，就是例如`__init__()`,`__del__()`,`__call__()`这些特殊方法
 
-`_foo`:一种约定,用来指定变量私有.程序员用来指定私有变量的一种方式.不能用from module import * 导入，其他方面和公有一样访问；
-
-`__foo`:这个有真正的意义:解析器用`_classname__foo`来代替这个名字,以区别和其他类相同的命名,它无法直接像公有成员一样随便访问,通过对象名._类名__xxx这样的方式可以访问.
+`_foo`: 以单下划线开头的表示的是protected类型的变量,即保护类型只能允许其本身与子类进行访问.不能用from module import * 导入，其他方面和公有一样访问.
+`__foo`:、__xxx 双下划线的表示的是私有类型的变量.只能是允许这个类本身进行访问了,连子类也不可以.
 
 详情见:http://stackoverflow.com/questions/1301346/the-meaning-of-a-single-and-a-double-underscore-before-an-object-name-in-python
 
@@ -368,9 +367,17 @@ AttributeError: myClass instance has no attribute '__superprivate'
 
 ```
 "hi there %s" % (name,)   # 提供一个单元素的数组而不是一个参数
+In [6]: name = (1,2,3)
+
+In [7]: print("This is %s" %(name,))
+This is (1, 2, 3)
 ```
 
 但是有点丑..format就没有这些问题.你给的第二个问题也是这样,.format好看多了.
+```
+In [9]: print("This is {}".format(name))
+This is (1, 2, 3)
+```
 
 你为什么不用它?
 
@@ -389,13 +396,47 @@ http://stackoverflow.com/questions/5082452/python-string-formatting-vs-format
 问：  将列表生成式中[]改成() 之后数据结构是否改变？ 
 答案：是，从列表变为生成器
 
-```python
->>> L = [x*x for x in range(10)]
+```python---列表生成式、生成器和迭代器
+>>> L = [x*x for x in range(10)]   #列表生成式
 >>> L
-[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
->>> g = (x*x for x in range(10))
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]   
+>>> g = (x*x for x in range(10))  #生成器
 >>> g
 <generator object <genexpr> at 0x0000028F8B774200>
+#可迭代对象
+#一、直接用于for循环的对象同通称为可迭代对象:Iterable
+# 1.集合数据类型：如list、tuple、dict、str等；2.生成器：包含生成器表达式和带yield的生成器函数
+In [14]: for temp in b:
+    ...:     print(temp)
+    ...:
+0
+1
+2
+#二、使用isinstance()判断是否是可迭代对象
+
+In [17]: from collections import Iterable
+
+In [18]: isinstance([],Iterable)
+Out[18]: True
+#迭代器
+#能被next()函数调用并不断返回下一个值的对象称为迭代器
+#可以使用isinstance()判断一个对象是否是迭代器：Iterator
+In [24]: b =  (x for x in range(3))
+
+In [25]: next(b)
+Out[25]: 0
+
+In [26]: next(b)
+Out[26]: 1
+
+In [27]: from collections import Iterator
+
+In [28]: isinstance(b,Iterator)
+Out[28]: True
+#使用iter():可以将可迭代对象（Iterable）变为迭代器（Iterator）
+In [30]: isinstance(iter([]),Iterator)
+Out[30]: True
+
 ```
 通过列表生成式，可以直接创建一个列表。但是，受到内存限制，列表容量肯定是有限的。而且，创建一个包含百万元素的列表，不仅是占用很大的内存空间，如：我们只需要访问前面的几个元素，后面大部分元素所占的空间都是浪费的。因此，没有必要创建完整的列表（节省大量内存空间）。在Python中，我们可以采用生成器：边循环，边计算的机制—>generator
 
@@ -406,7 +447,7 @@ http://stackoverflow.com/questions/5082452/python-string-formatting-vs-format
 当你不确定你的函数里将要传递多少参数时你可以用`*args`.例如,它可以传递任意数量的参数:
 
 ```python
->>> def print_everything(*args):
+>>> def print_everything(*args):  #*args,让Python创建一个名字为args的空元组,并将接收到的所有值封装到这个元组中
         for count, thing in enumerate(args):
 ...         print '{0}. {1}'.format(count, thing)
 ...
@@ -419,7 +460,7 @@ http://stackoverflow.com/questions/5082452/python-string-formatting-vs-format
 相似的,`**kwargs`允许你使用没有事先定义的参数名:
 
 ```python
->>> def table_things(**kwargs):
+>>> def table_things(**kwargs):  #形参**kwargs,让Python创建一个名字为kwargs的空字典,并将接收到的所有名称-值封装到这个空字典中
 ...     for name, value in kwargs.items():
 ...         print '{0} = {1}'.format(name, value)
 ...
