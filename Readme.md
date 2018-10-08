@@ -134,15 +134,31 @@ a = 1
 def fun(a):
     a = 2
 fun(a)
-print a  # 1
+print(a)   # 1 fun()函数中修改的是局部变量a，不影响全局变量a
+
 ```
 
 ```python
 a = []
 def fun(a):
-    a.append(1)
+    a.append(1)   #全局变量可变，不加声明的修改它
 fun(a)
-print a  # [1]
+print(a)  # [1]
+```
+
+```python
+
+In [14]: a = []
+
+In [15]: def fun():
+    ...:     global a   #如果想对全局变量重新赋值，必须使用global声明它
+    ...:     a += ["aa","bb"]
+    ...:
+
+In [16]: fun()
+
+In [17]: print(a)
+['aa', 'bb']
 ```
 
 所有的变量都可以理解是内存中一个对象的“引用”，或者，也可以看似c中void*的感觉。
